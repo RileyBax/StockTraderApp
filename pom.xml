@@ -3,4 +3,11 @@
   <groupId>com.default</groupId>
   <artifactId>StockTraderApp</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <dependencies>
+	  <dependency>
+        <groupId>io.github.mainstringargs.alphavantagescraper</groupId>
+        <artifactId>alpha-vantage-scraper</artifactId>
+        <version>1.5.1</version>
+    </dependency>
+  </dependencies>
 </project>
