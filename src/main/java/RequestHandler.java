@@ -2,6 +2,9 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import io.github.mainstringargs.alphavantagescraper.AlphaVantageConnector;
 import io.github.mainstringargs.alphavantagescraper.StockQuotes;
 import io.github.mainstringargs.alphavantagescraper.TimeSeries;
@@ -45,6 +48,7 @@ public class RequestHandler extends StockQuotes {
 			return stockData;
 		}
 		catch(NullPointerException | AlphaVantageException e) {
+			JOptionPane.showMessageDialog(new JFrame(), "Could not Retrieve Historic Data. \nPlease wait, then try again.");
 			return null;
 		}
 

@@ -61,8 +61,8 @@ public class Graph extends JPanel{
 
 			for(int i = length - 1; i >= 0 ; i--) {
 
-				x = (int) (40 + i * (330.0f / (length - 1)));
-				y = (int) (10 + (stockData.get(i).getAdjustedClose() - minPrice) / difference * 240);
+				x = (int) (40 + 330 - (i * (330.0f / (length - 1))));
+				y = (int) (30 + 220 - (stockData.get(i).getAdjustedClose() - minPrice) / difference * 220);
 
 				points[i] = new Point(x, y);
 

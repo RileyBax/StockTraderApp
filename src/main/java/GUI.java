@@ -1,12 +1,12 @@
 /* TODO:
- * plan gui layout - 2 panels, search and current stock data on first, portfolio info on second, JScrollBar
- * create new request handler - multi thread
- * 5 api calls per min, create queue and make calls when possible?
- * new stock and stock held classes
  * new portfolio class
- * get stock method
+ * handle requests between panels
  */
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
 import javax.swing.JFrame;
 
 public class GUI extends JFrame{
@@ -20,9 +20,35 @@ public class GUI extends JFrame{
 		this.setLayout(null);
 		
 		MarketPanel mPanel = new MarketPanel(rh);
+		PortfolioPanel pPanel = new PortfolioPanel(rh);
 		
 		this.add(mPanel);
 		mPanel.setVisible(true);
+		
+		this.add(pPanel);
+		pPanel.setVisible(false);
+		
+		JButton swapButton = new JButton("Portfolio");
+		swapButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if(mPanel.isVisible()) {
+					mPanel.setVisible(false);
+					pPanel.setVisible(true);
+					swapButton.setText("Market");
+				}
+				else {
+					mPanel.setVisible(true);
+					pPanel.setVisible(false);
+					swapButton.setText("Portfolio");
+				}
+				
+			}
+		});
+		swapButton.setBounds(10, 10, 200, 30);
+		this.add(swapButton);
 
 		this.setVisible(true);
 

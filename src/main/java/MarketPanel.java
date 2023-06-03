@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -19,27 +20,33 @@ import io.github.mainstringargs.alphavantagescraper.output.timeseries.data.Stock
 
 public class MarketPanel extends JPanel{
 
-	ArrayList<Stock> recentList;
+	ArrayList<StockPanel> recentList;
 	List<StockData> stockDataList;
 	RequestHandler rh;
 	int length = 8;
-
+	static JPanel recentPanel;
+	Graph stockGraph;
+	final JTextArea stockData;
+	final JTextField searchBar;
+	final JTextArea stockHistoryData;
+	
 	public MarketPanel(final RequestHandler rh) {
 
 		this.rh = rh;
-		recentList = new ArrayList<Stock>();
+		recentList = new ArrayList<StockPanel>();
+		this.setOpaque(false);
 
 		this.setBounds(0, 0, 800, 600);
 		this.setLayout(null);
 
-		Graph stockGraph = new Graph();
+		stockGraph = new Graph();
 		this.add(stockGraph);
 
 		JLabel graphLabel = new JLabel("Price History Graph");
 		graphLabel.setBounds(370, 40, 200, 30);
 		this.add(graphLabel);
 
-		final JTextField searchBar = new JTextField();
+		searchBar = new JTextField();
 		searchBar.setBounds(220, 10, 400, 30);
 		this.add(searchBar);
 
@@ -58,7 +65,7 @@ public class MarketPanel extends JPanel{
 		JButton sellButton = new JButton("Sell");
 		sellButton.setBounds(630, 140, 140, 30);
 		this.add(sellButton);
-		
+
 		JLabel sharesLabel = new JLabel("Shares: ");
 		sharesLabel.setBounds(630, 202, 200, 30);
 		this.add(sharesLabel);
@@ -67,7 +74,7 @@ public class MarketPanel extends JPanel{
 		stockHistoryDataLabel.setBounds(500, 350, 200, 30);
 		this.add(stockHistoryDataLabel);
 
-		final JTextArea stockHistoryData = new JTextArea();
+		stockHistoryData = new JTextArea();
 		stockHistoryData.setBounds(500, 380, 270, 170);
 		this.add(stockHistoryData);
 
@@ -113,43 +120,18 @@ public class MarketPanel extends JPanel{
 		});
 		this.add(weekGraph);
 
-		JButton pButton = new JButton("Portfolio");
-		pButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				
-				
-			}
-		});
-		pButton.setBounds(10, 10, 200, 30);
-		this.add(pButton);
-
 		JLabel stockDataLabel = new JLabel("Daily Stock Data");
 		stockDataLabel.setBounds(220, 350, 200, 30);
 		this.add(stockDataLabel);
 
-		final JTextArea stockData = new JTextArea();
+		stockData = new JTextArea();
 		stockData.setBounds(220, 380, 270, 170);
 		this.add(stockData);
 
-		// create set class for recent stocks, no duplicate labels.
-		final JPanel recentStock[] = new JPanel[16];
-		final JLabel recentStockLabel[] = new JLabel[16];
-		for(int i = 0; i < recentStock.length; i++) {
-
-			recentStockLabel[i] = new JLabel();
-			recentStockLabel[i].setBounds(0, 0, 200, 30);
-
-			recentStock[i] = new JPanel();
-			recentStock[i].setBounds(10, 70 + i * 30, 200, 30);
-			recentStock[i].setBackground(Color.LIGHT_GRAY);
-			this.add(recentStock[i]);
-
-			recentStock[i].add(recentStockLabel[i]);
-
-		}
+		recentPanel = new JPanel();
+		recentPanel.setBounds(10, 70, 200, 480);
+		recentPanel.setBackground(Color.LIGHT_GRAY);
+		this.add(recentPanel);
 
 		JLabel stockListLabel = new JLabel("Recently Viewed");
 		stockListLabel.setBounds(60, 40, 200, 30);
@@ -162,34 +144,7 @@ public class MarketPanel extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 
 				Stock stock = rh.get(searchBar.getText());
-				if(stock != null) {
-					recentList.add(stock);
-					length = 8;
-
-					for(int i = 0; i < recentList.size(); i++) {
-
-						recentStock[i].setBackground(new Color(255 - 15 * i, 255 - 15 * i, 255 - 15 * i));
-						if(recentStockLabel[i].getText().isEmpty()) {
-							recentStockLabel[i].setText(stock.getSymbol());
-						}
-						recentStock[i].setLocation(10, 70 + ((recentList.size() - 1) * 30 - i * 30));
-
-					}
-
-					stockData.setText(updateData(stock));
-
-					// update graph
-					stockDataList = rh.getHistory(searchBar.getText());
-					if(stockDataList != null) {
-						stockGraph.setStock(stockDataList, 8);
-						stockHistoryData.setText(updateGraphData());
-					}
-
-				}
-				else {
-					stockData.setText("");
-					JOptionPane.showMessageDialog(new JFrame(), "Could not Retrieve Stock. \nPlease try again.");
-				}
+				updatePanel(stock);
 
 			}
 
@@ -232,10 +187,10 @@ public class MarketPanel extends JPanel{
 		double min = stockDataList.get(0).getAdjustedClose();
 		double max = stockDataList.get(length-1).getAdjustedClose();
 
-		for(StockData sd : stockDataList) {
+		for(int i = 0; i < length; i++) {
 
-			if(sd.getAdjustedClose() > max) max = sd.getAdjustedClose();
-			else if(sd.getAdjustedClose() < min) min = sd.getAdjustedClose();
+			if(stockDataList.get(i).getAdjustedClose() > max) max = stockDataList.get(i).getAdjustedClose();
+			else if(stockDataList.get(i).getAdjustedClose() < min) min = stockDataList.get(i).getAdjustedClose();
 
 		}
 
@@ -255,9 +210,9 @@ public class MarketPanel extends JPanel{
 
 		StockData out = stockDataList.get(0);
 
-		for(StockData sd : stockDataList) {
+		for(int i = 0; i < length; i++) {
 
-			if(sd.getAdjustedClose() > out.getAdjustedClose()) out = sd;
+			if(stockDataList.get(i).getAdjustedClose() > out.getAdjustedClose()) out = stockDataList.get(i);
 
 		}
 
@@ -268,13 +223,93 @@ public class MarketPanel extends JPanel{
 
 		StockData out = stockDataList.get(0);
 
-		for(StockData sd : stockDataList) {
+		for(int i = 0; i < length; i++) {
 
-			if(sd.getAdjustedClose() < out.getAdjustedClose()) out = sd;
+			if(stockDataList.get(i).getAdjustedClose() < out.getAdjustedClose()) out = stockDataList.get(i);
 
 		}
 
-		return "Low " + out.getAdjustedClose() + " at " + getDatetoString(out);
+		return "Low " + new DecimalFormat("0.00").format(out.getAdjustedClose()) + " at " + getDatetoString(out);
 	}
 
+	public void updateRecentStock() {
+		
+		for(int i = recentList.size()-1; i >= 0; i--) {
+			
+			recentList.get(i).setBounds(10, 40 + (recentList.size() - i) * 30, 200, 30);
+			if (recentList.get(i).stock.getChange().floatValue() > 0) {
+				recentList.get(i).setBackground(new Color(80 - 5 * i, 255 - 15 * i, 80 - 15 * i));
+			}
+			else {
+				recentList.get(i).setBackground(new Color(255 - 15 * i, 80 - 15 * i, 80 - 15 * i));
+			}
+			
+		}
+		
+		this.add(recentList.get(recentList.size()-1));
+		
+		recentPanel.setBounds(10, 70 + recentList.size() * 30, 200, 480 - recentList.size() * 30);
+		
+	}
+	
+	public boolean containsStock(Stock stock) {
+		
+		for(StockPanel sp : recentList) {
+			
+			if(sp.symbol.getText().equals(stock.getSymbol())) return true;
+			
+		}
+		
+		return false;
+	}
+	
+	public void createPanel(Stock stock, List<StockData> stockDataList) {
+		recentList.add(new StockPanel(stock, stockDataList, this));
+	}
+
+	public void updatePanel(Stock stock) {
+		
+		if(stock != null) {
+
+			stockData.setText(updateData(stock));
+
+			// update graph
+			length = 8;
+			
+			stockDataList = rh.getHistory(searchBar.getText());
+			if(stockDataList != null) {
+				stockGraph.setStock(stockDataList, 8);
+				stockHistoryData.setText(updateGraphData());
+			}
+			
+			if(!containsStock(stock)) {
+				createPanel(stock, stockDataList);
+			}
+			else {
+				//update that panel
+			}
+
+			updateRecentStock();
+
+		}
+		else {
+			stockData.setText("");
+			JOptionPane.showMessageDialog(new JFrame(), "Could not Retrieve Stock. \nPlease try again.");
+		}
+		
+	}
+	
+	public void updateFromRecent(Stock stock, List<StockData> stockDataList) {
+		
+		stockData.setText(updateData(stock));
+		this.stockDataList = stockDataList;
+		this.length = 8;
+		
+		if(stockDataList != null) {
+			stockGraph.setStock(stockDataList, 8);
+			stockHistoryData.setText(updateGraphData());
+		}
+		
+	}
+	
 }
