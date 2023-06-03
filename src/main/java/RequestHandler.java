@@ -17,16 +17,16 @@ public class RequestHandler extends StockQuotes {
 
 	static String apiKey = "ATD3OP6WNYPCRAEY";
 	static TimeSeries timeSeries;
-	
+
 	public RequestHandler() {
-		
+
 		super(new AlphaVantageConnector(apiKey, 3000));
 		timeSeries = new TimeSeries(new AlphaVantageConnector(apiKey, 3000));
-		
+
 	}
-	
+
 	public Stock get(String input) {
-		
+
 		try {
 			StockQuote stock = this.quote(input).getStockQuote();
 			return new Stock(stock);
@@ -36,45 +36,18 @@ public class RequestHandler extends StockQuotes {
 		}
 
 	}
-	
-	public List<StockData> getHistory(String input, int length) {
-		
-		ArrayList<StockData> out = new ArrayList<StockData>();
-		
+
+	public List<StockData> getHistory(String input) {
+
 		try {
-			
-			if(length == 1) {
-				TimeSeriesResponse response = timeSeries.dailyAdjusted(input);
-				List<StockData> stockData = response.getStockData();
-				for(int i = 0; i < 8; i++) {
-					out.add(stockData.get(i));
-				}
-				return out;
-			}
-			else if(length == 2) {
-				TimeSeriesResponse response = timeSeries.dailyAdjusted(input);
-				List<StockData> stockData = response.getStockData();
-				for(int i = 0; i < 31; i++) {
-					out.add(stockData.get(i));
-				}
-				return out;
-			}
-			else if(length == 3) {
-				TimeSeriesResponse response = timeSeries.monthlyAdjusted(input);
-				List<StockData> stockData = response.getStockData();
-				for(int i = 0; i < 13; i++) {
-					out.add(stockData.get(i));
-				}
-				return out;
-			}
-			else {
-				return null;
-			}
+			TimeSeriesResponse response = timeSeries.dailyAdjusted(input, OutputSize.FULL);
+			List<StockData> stockData = response.getStockData();
+			return stockData;
 		}
 		catch(NullPointerException | AlphaVantageException e) {
 			return null;
 		}
-		
+
 	}
-	
+
 }

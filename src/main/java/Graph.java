@@ -7,26 +7,32 @@ import java.awt.Point;
 
 import io.github.mainstringargs.alphavantagescraper.output.timeseries.data.StockData;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class Graph extends JPanel{
 
 	ArrayList<StockData> stockData;
+	int length;
 
 	public Graph() {
 
-		this.setBounds(220, 50, 400, 300);
+		this.setBounds(220, 70, 400, 280);
 		stockData = new ArrayList<StockData>();
 
 	}
 
-	public void setStock(List<StockData> stockData) {
+	public void setStock(List<StockData> stockData, int length) {
 
 		if(stockData != null) {
 			this.stockData = (ArrayList<StockData>) stockData;
+			this.length = length;
 		}
 		else {
 			this.stockData = new ArrayList<StockData>();
+			JOptionPane.showMessageDialog(new JFrame(), "Could not Retrieve Graph Data. \nPlease wait, then try again.");
+			this.length = 0;
 		}
 		this.repaint();
 
@@ -38,36 +44,55 @@ public class Graph extends JPanel{
 		Graphics2D g2d = (Graphics2D) g;
 
 		g2d.setColor(Color.LIGHT_GRAY);
-		g2d.fillRect(0, 0, 400, 300);
+		g2d.fillRect(0, 0, 400, 280);
+		
+		if(length > 0) {
 
-		g2d.setColor(Color.BLACK);
-		g2d.drawLine(30, 270, 30, 30);
-		g2d.drawLine(30, 270, 370, 270);
+			g2d.setColor(Color.BLACK);
+			g2d.drawLine(40, 250, 40, 30);
+			g2d.drawLine(40, 250, 370, 250);
 
-		double maxPrice = max();
-		double minPrice = min();
-		double difference = maxPrice - minPrice;
-		int x = 0;
-		int y = 0;
-		Point points[] = new Point[stockData.size()];
+			double maxPrice = max();
+			double minPrice = min();
+			double difference = maxPrice - minPrice;
+			int x = 0;
+			int y = 0;
+			Point points[] = new Point[length];
 
-		for(int i = 0; i < stockData.size(); i++) {
+			for(int i = length - 1; i >= 0 ; i--) {
 
-			x = 30 + i * (340 / (stockData.size() - 1));
-			y = (int) (30 + (stockData.get(i).getAdjustedClose() - minPrice) / difference * 240);
+				x = (int) (40 + i * (330.0f / (length - 1)));
+				y = (int) (10 + (stockData.get(i).getAdjustedClose() - minPrice) / difference * 240);
 
-			points[i] = new Point(x, y);
+				points[i] = new Point(x, y);
 
-		}
+			}
 
-		if(points.length > 1) {
+			if(points.length > 1) {
+				
+				if(stockData.get(length-1).getAdjustedClose() > stockData.get(0).getAdjustedClose()) g2d.setColor(Color.RED);
+				else g2d.setColor(Color.GREEN);
 
-			for(int i = 0; i < points.length - 1; i++) {
+				for(int i = 0; i < points.length - 1; i++) {
 
-				g2d.drawLine(points[i].x, points[i].y, points[i+1].x, points[i+1].y);
+					g2d.drawLine(points[i].x, points[i].y, points[i+1].x, points[i+1].y);
+
+				}
+				
+				g2d.setColor(Color.BLACK);
+
+				g2d.drawString(stockData.get(length-1).getDateTime().toString(), 20, 270);
+				g2d.drawString(stockData.get(0).getDateTime().toString(), 280, 270);
+
+				g2d.drawString(String.valueOf(maxPrice), 0, 20);
+				g2d.drawString(String.valueOf(minPrice), 0, 250);
 
 			}
 			
+			if(points.length < 10) g2d.drawString("7 Day recent Close Price", 140, 20);
+			else if (points.length > 10 && points.length < 32) g2d.drawString("1 Month recent Close Price", 130, 20);
+			else if(points.length > 32) g2d.drawString(length + " Day recent Close Price", 140, 20);
+
 		}
 
 	}
@@ -76,7 +101,7 @@ public class Graph extends JPanel{
 
 		double out = 0;
 
-		for(int i = 0; i < stockData.size(); i++) {
+		for(int i = 0; i < length; i++) {
 
 			if(stockData.get(i).getAdjustedClose() > out) out = stockData.get(i).getAdjustedClose();
 
@@ -87,11 +112,11 @@ public class Graph extends JPanel{
 
 	public double min() {
 
-		if(stockData.size() > 0) {
+		if(length > 0) {
 
 			double out = stockData.get(0).getAdjustedClose();
 
-			for(int i = 0; i < stockData.size(); i++) {
+			for(int i = 0; i < length; i++) {
 
 				if(stockData.get(i).getAdjustedClose() < out) out = stockData.get(i).getAdjustedClose();
 

@@ -9,6 +9,8 @@ public class Stock {
 	private BigDecimal price;
 	private BigDecimal closePrice;
 	private BigDecimal openPrice;
+	private BigDecimal change;
+	private BigDecimal changePercent;
 	public RequestHandler rh = new RequestHandler();
 
 	public String getSymbol() {
@@ -43,12 +45,30 @@ public class Stock {
 		this.openPrice = openPrice;
 	}
 
+	public BigDecimal getChange() {
+		return change;
+	}
+
+	public void setChange(BigDecimal change) {
+		this.change = change;
+	}
+
+	public BigDecimal getChangePercent() {
+		return changePercent;
+	}
+
+	public void setChangePercent(BigDecimal changePercent) {
+		this.changePercent = changePercent;
+	}
+
 	public Stock(StockQuote stock) {
 
 		this.symbol = stock.getSymbol();
 		this.price =  BigDecimal.valueOf(stock.getPrice());
 		this.closePrice = BigDecimal.valueOf(stock.getPreviousClose());
 		this.openPrice = BigDecimal.valueOf(stock.getOpen());
+		this.change = BigDecimal.valueOf(stock.getChange());
+		this.changePercent = BigDecimal.valueOf(stock.getChangePercent());
 
 	}
 
@@ -58,6 +78,8 @@ public class Stock {
 		this.price = stock.price;
 		this.closePrice = stock.closePrice;
 		this.openPrice = stock.openPrice;
+		this.change = stock.getChange();
+		this.changePercent = stock.getChangePercent();
 
 	}
 
