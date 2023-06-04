@@ -1,6 +1,8 @@
 /* TODO:
  * new portfolio class
  * handle requests between panels
+ * buy and sell functionality
+ * CREATE LOGIN PANEL, READ FROM DB
  */
 
 import java.awt.event.ActionEvent;
@@ -19,8 +21,11 @@ public class GUI extends JFrame{
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setLayout(null);
 		
-		MarketPanel mPanel = new MarketPanel(rh);
-		PortfolioPanel pPanel = new PortfolioPanel(rh);
+		// login here
+		Portfolio pf = new Portfolio("temp");
+		
+		MarketPanel mPanel = new MarketPanel(rh, pf);
+		PortfolioPanel pPanel = new PortfolioPanel(rh, pf);
 		
 		this.add(mPanel);
 		mPanel.setVisible(true);
@@ -37,6 +42,7 @@ public class GUI extends JFrame{
 				if(mPanel.isVisible()) {
 					mPanel.setVisible(false);
 					pPanel.setVisible(true);
+					pPanel.updatePanel();
 					swapButton.setText("Market");
 				}
 				else {

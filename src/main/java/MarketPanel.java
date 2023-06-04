@@ -29,8 +29,8 @@ public class MarketPanel extends JPanel{
 	final JTextArea stockData;
 	final JTextField searchBar;
 	final JTextArea stockHistoryData;
-	
-	public MarketPanel(final RequestHandler rh) {
+
+	public MarketPanel(final RequestHandler rh, Portfolio pf) {
 
 		this.rh = rh;
 		recentList = new ArrayList<StockPanel>();
@@ -56,6 +56,19 @@ public class MarketPanel extends JPanel{
 
 		JButton buyButton = new JButton("Buy");
 		buyButton.setBounds(630, 70, 140, 30);
+		buyButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				if(stockData.getText().length() > 1) {
+					Stock stock = searchRecent(stockData.getText().split("\n")[0].split(" ")[1]);
+					
+					if(Float.parseFloat(buyField.getText()) > 0) pf.add(stock, Float.parseFloat(buyField.getText()));
+				}
+				
+			}
+		});
 		this.add(buyButton);
 
 		JTextField sellField = new JTextField();
@@ -233,9 +246,9 @@ public class MarketPanel extends JPanel{
 	}
 
 	public void updateRecentStock() {
-		
+
 		for(int i = recentList.size()-1; i >= 0; i--) {
-			
+
 			recentList.get(i).setBounds(10, 40 + (recentList.size() - i) * 30, 200, 30);
 			if (recentList.get(i).stock.getChange().floatValue() > 0) {
 				recentList.get(i).setBackground(new Color(80 - 5 * i, 255 - 15 * i, 80 - 15 * i));
@@ -243,45 +256,56 @@ public class MarketPanel extends JPanel{
 			else {
 				recentList.get(i).setBackground(new Color(255 - 15 * i, 80 - 15 * i, 80 - 15 * i));
 			}
-			
+
 		}
-		
+
 		this.add(recentList.get(recentList.size()-1));
-		
+
 		recentPanel.setBounds(10, 70 + recentList.size() * 30, 200, 480 - recentList.size() * 30);
-		
+
 	}
-	
+
 	public boolean containsStock(Stock stock) {
-		
+
 		for(StockPanel sp : recentList) {
-			
+
 			if(sp.symbol.getText().equals(stock.getSymbol())) return true;
-			
+
 		}
-		
+
 		return false;
 	}
-	
+
+	public Stock searchRecent(String symbol) {
+
+		for(StockPanel sp : recentList) {
+
+			if(sp.symbol.getText().equals(symbol)) return sp.stock;
+
+		}
+
+		return null;
+	}
+
 	public void createPanel(Stock stock, List<StockData> stockDataList) {
 		recentList.add(new StockPanel(stock, stockDataList, this));
 	}
 
 	public void updatePanel(Stock stock) {
-		
+
 		if(stock != null) {
 
 			stockData.setText(updateData(stock));
 
 			// update graph
 			length = 8;
-			
+
 			stockDataList = rh.getHistory(searchBar.getText());
 			if(stockDataList != null) {
 				stockGraph.setStock(stockDataList, 8);
 				stockHistoryData.setText(updateGraphData());
 			}
-			
+
 			if(!containsStock(stock)) {
 				createPanel(stock, stockDataList);
 			}
@@ -296,20 +320,20 @@ public class MarketPanel extends JPanel{
 			stockData.setText("");
 			JOptionPane.showMessageDialog(new JFrame(), "Could not Retrieve Stock. \nPlease try again.");
 		}
-		
+
 	}
-	
+
 	public void updateFromRecent(Stock stock, List<StockData> stockDataList) {
-		
+
 		stockData.setText(updateData(stock));
 		this.stockDataList = stockDataList;
 		this.length = 8;
-		
+
 		if(stockDataList != null) {
 			stockGraph.setStock(stockDataList, 8);
 			stockHistoryData.setText(updateGraphData());
 		}
-		
+
 	}
-	
+
 }

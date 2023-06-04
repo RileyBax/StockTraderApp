@@ -1,5 +1,5 @@
-import java.io.IOException;
-import java.math.BigDecimal;
+
+import java.time.LocalDateTime;
 
 import io.github.mainstringargs.alphavantagescraper.output.quote.data.StockQuote;
 
@@ -8,6 +8,7 @@ public class StockHeld extends Stock{
 	private float amount;
 	private float pricePaid;
 	private float priceBoughtAt;
+	private LocalDateTime date;
 
 	public StockHeld(Stock stock, float pricePaid) {
 		
@@ -16,6 +17,7 @@ public class StockHeld extends Stock{
 		this.pricePaid = pricePaid;
 		priceBoughtAt = stock.getPrice().floatValue();
 		amount = pricePaid / stock.getPrice().floatValue();
+		date = LocalDateTime.now();
 		
 	}
 	
@@ -53,13 +55,13 @@ public class StockHeld extends Stock{
 	public void setPriceBoughtAt(float priceBoughtAt) {
 		this.priceBoughtAt = priceBoughtAt;
 	}
+	
+	public LocalDateTime getDate() {
+		return date;
+	}
 
 	@Override
 	public String toString() {
-		
-		try {
-			setPrice(BigDecimal.valueOf(getCurrentPrice()));
-		} catch (IOException e) {}
 		
 		return super.toString() + "Shares Held: " + amount + "\nPrice of Shares Held: " + getPrice().floatValue() * amount + "\n";
 		

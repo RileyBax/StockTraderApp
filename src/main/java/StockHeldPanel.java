@@ -1,27 +1,21 @@
-
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import io.github.mainstringargs.alphavantagescraper.output.timeseries.data.StockData;
+public class StockHeldPanel extends JPanel{
 
-public class StockPanel extends JPanel{
-
+	StockHeld stockHeld;
 	JLabel symbol;
-	Stock stock;
-	List<StockData> stockData;
-	JPanel marketPanel;
-
-	public StockPanel(Stock stock, List<StockData> stockData, MarketPanel marketPanel) {
-
-		this.stock = stock;
-		this.stockData = stockData;
-		this.marketPanel = marketPanel;
-		this.stock.setHistory(stockData);
-		symbol = new JLabel(stock.getSymbol());
+	PortfolioPanel pPanel;
+	
+	public StockHeldPanel(StockHeld stockHeld, PortfolioPanel pPanel) {
+		
+		this.stockHeld = stockHeld;
+		this.pPanel = pPanel;
+		
+		symbol = new JLabel(stockHeld.getSymbol());
 		symbol.setBounds(0, 0, 200, 30);
 		this.add(symbol);
 
@@ -54,19 +48,22 @@ public class StockPanel extends JPanel{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 
-				isClicked(e, marketPanel);
+				isClicked(e, pPanel);
 
 			}
 		});
 
 		this.setVisible(true);
-
+		
 	}
-
-	public void isClicked(MouseEvent e, MarketPanel marketPanel ) {
-
-		marketPanel.updateFromRecent(stock, stockData);
-
+	
+	public void isClicked(MouseEvent e, PortfolioPanel pf) {
+		
+		// update graph, shpw amount owned
+		if(pPanel.length > 31) pPanel.length = stockHeld.getHistory().size();
+		pPanel.selectedStock = stockHeld;
+		pPanel.updatePanel();
+		
 	}
-
+	
 }

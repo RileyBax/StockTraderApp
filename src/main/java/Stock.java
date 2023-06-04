@@ -1,7 +1,9 @@
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 
 import io.github.mainstringargs.alphavantagescraper.output.quote.data.StockQuote;
+import io.github.mainstringargs.alphavantagescraper.output.timeseries.data.StockData;
 
 public class Stock {
 
@@ -11,6 +13,7 @@ public class Stock {
 	private BigDecimal openPrice;
 	private BigDecimal change;
 	private BigDecimal changePercent;
+	private List<StockData> history;
 	public RequestHandler rh = new RequestHandler();
 
 	public String getSymbol() {
@@ -60,6 +63,14 @@ public class Stock {
 	public void setChangePercent(BigDecimal changePercent) {
 		this.changePercent = changePercent;
 	}
+	
+	public List<StockData> getHistory(){
+		return history;
+	}
+	
+	public void setHistory(List<StockData> history) {
+		this.history = history;
+	}
 
 	public Stock(StockQuote stock) {
 
@@ -80,6 +91,8 @@ public class Stock {
 		this.openPrice = stock.openPrice;
 		this.change = stock.getChange();
 		this.changePercent = stock.getChangePercent();
+		
+		this.history = stock.getHistory();
 
 	}
 
