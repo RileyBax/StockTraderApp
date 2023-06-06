@@ -157,63 +157,8 @@ public class PortfolioPanel extends JPanel{
 		});
 		this.add(updateButton);
 
-		// LOADING INFO IN THIS PANEL WHEN UPDATING
 		updatePanel = new UpdatePanel();
 		this.add(updatePanel);
-
-	}
-
-	public synchronized void getUser() throws SQLException {
-
-		ResultSet rs = db.getData(pf.name);
-
-		ArrayList<StartStock> startList = new ArrayList<StartStock>();
-
-		while(rs.next()) {
-
-			startList.add(new StartStock(rs.getString("symbol"), rs.getString("amount"), rs.getString("pricePaid"), rs.getString("priceBoughtAt")));
-
-		}
-
-		if(startList.size() > 0) {
-
-			int size = startList.size();
-
-			for(int i = 0; i < size; i++) {
-
-				while(pf.stockList.size() != i + 1) {
-
-					try {
-						pf.stockList.add(new StockHeld(rh.get(startList.get(i).symbol), startList.get(i).amount, startList.get(i).pricePaid, startList.get(i).priceBoughtAt));
-					}
-					catch(NullPointerException | AlphaVantageException e){
-						try {
-							this.wait(5000);
-						} catch (InterruptedException e1) {}
-					}
-
-				}
-
-			}
-			
-			for(int i = 0; i < size; i++) {
-				
-				while(pf.stockList.get(i).getHistory() == null) {
-					
-					try {
-						pf.stockList.get(i).setHistory(rh.getHistory(startList.get(i).symbol));
-					}
-					catch(NullPointerException | AlphaVantageException e){
-						try {
-							this.wait(5000);
-						} catch (InterruptedException e1) {}
-					}
-					
-				}
-				
-			}
-
-		}
 
 	}
 
@@ -226,7 +171,6 @@ public class PortfolioPanel extends JPanel{
 		// update stock list
 		StockHeldPanel temp;
 
-		// TODO: if stocklist has more than one temp, add an index number to each
 		for(int i = 0; i < pf.stockList.size(); i++) {
 
 			temp = new StockHeldPanel(pf.stockList.get(i), this);
@@ -249,7 +193,7 @@ public class PortfolioPanel extends JPanel{
 		// stock list is null exception?
 		if(pf.stockList.size() > 0) {
 
-			stockGraph.setStock(pf.stockList.get(getIndex(selectedStock)).getHistory(), length, pf.stockList.get(getIndex(selectedStock)).getPriceBoughtAt());
+			stockGraph.setStock(pf.stockList.get(getIndex(selectedStock)).getHistory(), length, pf.stockList.get(getIndex(selectedStock)).getPriceBoughtAt(), pf.stockList.get(getIndex(selectedStock)).getPrice().floatValue());
 
 			// update stockData
 			stockData.setText("Symbol: " + selectedStock.getSymbol()

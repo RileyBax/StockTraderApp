@@ -65,7 +65,9 @@ public class Database {
     
     public ResultSet getData(String name) throws SQLException {
     	
-    	return state.executeQuery("SELECT symbol, amount, pricePaid, priceBoughtAt, profile FROM data WHERE profile = '" + name + "'");
+    	ResultSet rs = state.executeQuery("SELECT symbol, amount, pricePaid, priceBoughtAt, profile FROM data WHERE profile = '" + name + "'");
+    	
+    	return rs;
     	
     }
     

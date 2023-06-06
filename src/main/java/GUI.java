@@ -1,6 +1,5 @@
 /* TODO:
  * polish
- * login menu freezes
  */
 
 import java.awt.event.ActionEvent;
@@ -15,6 +14,7 @@ public class GUI extends JFrame{
 	final MarketPanel mPanel;
 	final PortfolioPanel pPanel;
 	final JButton swapButton;
+	final LoginPanel lPanel;
 	
 	public GUI() {
 
@@ -27,7 +27,7 @@ public class GUI extends JFrame{
 		mPanel = new MarketPanel(rh, pf);
 		pPanel = new PortfolioPanel(rh, pf);
 		
-		LoginPanel lPanel = new LoginPanel(this, pf, pPanel);
+		lPanel = new LoginPanel(this, pf, pPanel);
 		this.add(lPanel);
 		
 		this.add(mPanel);

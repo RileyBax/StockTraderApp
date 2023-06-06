@@ -5,16 +5,28 @@ import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.swing.JLabel;
 
 public class LoginPanel extends JPanel{
+	
+	Portfolio pf;
+	PortfolioPanel pPanel;
+	GUI gui;
+	
+	JButton inputButton;
 
 	public LoginPanel(final GUI gui, final Portfolio pf, final PortfolioPanel pPanel) {
 
 		this.setBounds(0, 0, 800, 600);
 		this.setLayout(null);
+		
+		this.pf = pf;
+		this.pPanel = pPanel;
+		this.gui = gui;
 
 		JLabel title = new JLabel("Stock Trader");
 		title.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 42));
@@ -29,7 +41,7 @@ public class LoginPanel extends JPanel{
 		input.setBounds(290, 270, 200, 30);
 		this.add(input);
 
-		JButton inputButton = new JButton("Enter");
+		inputButton = new JButton("Enter");
 		inputButton.setBounds(290, 300, 200, 30);
 		inputButton.addActionListener(new ActionListener() {
 
@@ -38,15 +50,13 @@ public class LoginPanel extends JPanel{
 
 				if(!input.getText().isEmpty()) {
 
-					getThis().setVisible(false);
 					pf.name = input.getText();
 					pPanel.updateName();
-					try {
-						pPanel.getUser();
-					} catch (SQLException e1) {}
 					
-					gui.mPanel.setVisible(true);
-					gui.swapButton.setVisible(true);
+					try {
+						setUpPortfolio();
+						inputButton.setEnabled(false);
+					} catch (SQLException e1) {}
 
 				}
 
@@ -56,6 +66,28 @@ public class LoginPanel extends JPanel{
 
 		this.setVisible(true);
 
+	}
+	
+	public void setUpPortfolio() throws SQLException {
+		
+		ResultSet rs = pPanel.db.getData(pf.name);
+
+		ArrayList<StartStock> startList = new ArrayList<StartStock>();
+
+		while(rs.next()) {
+
+			startList.add(new StartStock(rs.getString("symbol"), rs.getString("amount"), rs.getString("pricePaid"), rs.getString("priceBoughtAt")));
+
+		}
+
+		GetUserThread guThread = new GetUserThread(startList, pf, gui, pPanel);
+		UpdateLoginPanel uPanel = new UpdateLoginPanel();
+		uPanel.setBounds(320, 330, 140, 120);
+		this.add(uPanel);
+		UpdateLoginInfoThread uiThread = new UpdateLoginInfoThread(uPanel, guThread);
+		guThread.start();
+		uiThread.start();
+		
 	}
 
 	public LoginPanel getThis() {

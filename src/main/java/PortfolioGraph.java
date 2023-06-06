@@ -27,7 +27,7 @@ public class PortfolioGraph extends JPanel{
 
 	}
 
-	public void setStock(List<StockData> stockData, int length, float boughtAt) {
+	public void setStock(List<StockData> stockData, int length, float boughtAt, float currentPrice) {
 
 		if(stockData != null) {
 			this.stockData = (ArrayList<StockData>) stockData;
@@ -85,6 +85,9 @@ public class PortfolioGraph extends JPanel{
 				
 				g2d.setColor(Color.red);
 				g2d.drawLine(40, (int) (250 - (boughtAt - minPrice) / difference * 220), 370, (int) (250 - (boughtAt - minPrice) / difference * 220));
+				
+				g2d.setColor(Color.blue);
+				g2d.drawLine(40, (int) (250 - (stockData.get(0).getAdjustedClose() - minPrice) / difference * 220), 370, (int) (250 - (stockData.get(0).getAdjustedClose() - minPrice) / difference * 220));
 
 				g2d.setColor(Color.BLACK);
 

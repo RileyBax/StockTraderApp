@@ -48,7 +48,6 @@ public class RequestHandler extends StockQuotes {
 			return stockData;
 		}
 		catch(NullPointerException | AlphaVantageException e) {
-			JOptionPane.showMessageDialog(new JFrame(), "Could not Retrieve Historic Data. \nPlease wait, then try again.");
 			return null;
 		}
 
