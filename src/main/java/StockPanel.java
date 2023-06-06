@@ -15,7 +15,7 @@ public class StockPanel extends JPanel{
 	List<StockData> stockData;
 	JPanel marketPanel;
 
-	public StockPanel(Stock stock, List<StockData> stockData, MarketPanel marketPanel) {
+	public StockPanel(Stock stock, List<StockData> stockData, final MarketPanel marketPanel) {
 
 		this.stock = stock;
 		this.stockData = stockData;

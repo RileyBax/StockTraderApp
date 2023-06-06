@@ -2,6 +2,7 @@
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.ArrayList;
@@ -29,10 +30,14 @@ public class MarketPanel extends JPanel{
 	final JTextArea stockData;
 	final JTextField searchBar;
 	final JTextArea stockHistoryData;
+	final JLabel sharesLabel;
+	Portfolio pf;
+	JButton searchButton;
 
-	public MarketPanel(final RequestHandler rh, Portfolio pf) {
+	public MarketPanel(final RequestHandler rh, final Portfolio pf) {
 
 		this.rh = rh;
+		this.pf = pf;
 		recentList = new ArrayList<StockPanel>();
 		this.setOpaque(false);
 
@@ -50,7 +55,7 @@ public class MarketPanel extends JPanel{
 		searchBar.setBounds(220, 10, 400, 30);
 		this.add(searchBar);
 
-		JTextField buyField = new JTextField();
+		final JTextField buyField = new JTextField();
 		buyField.setBounds(630, 100, 140, 30);
 		this.add(buyField);
 
@@ -61,25 +66,47 @@ public class MarketPanel extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				if(stockData.getText().length() > 1) {
+				// java.lang.ArrayIndexOutOfBoundsException when error getting stock
+				if(!buyField.getText().isEmpty()) {
 					Stock stock = searchRecent(stockData.getText().split("\n")[0].split(" ")[1]);
-					
+
+					// HANDLE STRING EXCEPTION
+					// HANDLE MULTIPLE OF SAME BOUGHT
 					if(Float.parseFloat(buyField.getText()) > 0) pf.add(stock, Float.parseFloat(buyField.getText()));
+					updateSharesLabel(stock);
 				}
-				
+
 			}
 		});
 		this.add(buyButton);
 
-		JTextField sellField = new JTextField();
+		final JTextField sellField = new JTextField();
 		sellField.setBounds(630, 170, 140, 30);
 		this.add(sellField);
 
 		JButton sellButton = new JButton("Sell");
 		sellButton.setBounds(630, 140, 140, 30);
+		sellButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				if(buyField.getText().length() > 1) {
+
+					try {
+						pf.sell(pf.getStock(stockData.getText().split("\n")[0].split(" ")[1]), Float.parseFloat(sellField.getText()));
+						updateSharesLabel(searchRecent(stockData.getText().split("\n")[0].split(" ")[1]));
+					} catch (NumberFormatException | IOException e1) {
+						//warning message
+					}
+
+				}
+
+			}
+		});
 		this.add(sellButton);
 
-		JLabel sharesLabel = new JLabel("Shares: ");
+		sharesLabel = new JLabel("Shares: ");
 		sharesLabel.setBounds(630, 202, 200, 30);
 		this.add(sharesLabel);
 
@@ -150,14 +177,16 @@ public class MarketPanel extends JPanel{
 		stockListLabel.setBounds(60, 40, 200, 30);
 		this.add(stockListLabel);
 
-		JButton searchButton = new JButton("Search");
+		searchButton = new JButton("Search");
 		searchButton.setBounds(630, 10, 140, 30);
 		searchButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 
-				Stock stock = rh.get(searchBar.getText());
-				updatePanel(stock);
+				Stock stock = null;
+				SearchThread searchThread = new SearchThread(rh, stock, searchBar.getText(), getThis());
+				searchThread.start();
+				// historic search thread here
 
 			}
 
@@ -165,16 +194,20 @@ public class MarketPanel extends JPanel{
 		this.add(searchButton);
 
 	}
+	
+	public MarketPanel getThis() {
+		return this;
+	}
 
 	public String updateData(Stock stock) {
 
 		String out = "";
 
 		out += "Symbol: " + stock.getSymbol() 
-		+ "\n\nCurrent Price: " + stock.getPrice() 
-		+ "\nClose Price: " + stock.getClosePrice()  
-		+ "\nOpen Price: " + stock.getOpenPrice()
-		+ "\nChange: " + stock.getChange()
+		+ "\n\nCurrent Price: $" + stock.getPrice() 
+		+ "\nClose Price: $" + stock.getClosePrice()  
+		+ "\nOpen Price: $" + stock.getOpenPrice()
+		+ "\nChange: $" + stock.getChange()
 		+ "\nChange Percent: %" + stock.getChangePercent();
 
 
@@ -314,6 +347,8 @@ public class MarketPanel extends JPanel{
 			}
 
 			updateRecentStock();
+			
+			updateSharesLabel(stock);
 
 		}
 		else {
@@ -333,7 +368,18 @@ public class MarketPanel extends JPanel{
 			stockGraph.setStock(stockDataList, 8);
 			stockHistoryData.setText(updateGraphData());
 		}
-
+		
+		updateSharesLabel(stock);
+		
+	}
+	
+	public void updateSharesLabel(Stock stock) {
+		
+		if(pf.getStock(stock.getSymbol()) != null) {
+			sharesLabel.setText("Shares: " + pf.getStock(stock.getSymbol()).getAmount());
+		}
+		else sharesLabel.setText("Shares: 0");
+		
 	}
 
 }

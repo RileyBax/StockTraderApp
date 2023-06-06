@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.Point;
+import java.text.DecimalFormat;
 
 import io.github.mainstringargs.alphavantagescraper.output.timeseries.data.StockData;
 
@@ -84,8 +85,8 @@ public class Graph extends JPanel{
 				g2d.drawString(stockData.get(length-1).getDateTime().toString(), 20, 270);
 				g2d.drawString(stockData.get(0).getDateTime().toString(), 280, 270);
 
-				g2d.drawString(String.valueOf(maxPrice), 0, 20);
-				g2d.drawString(String.valueOf(minPrice), 0, 250);
+				g2d.drawString(String.valueOf(new DecimalFormat("0.00").format(maxPrice)), 0, 20);
+				g2d.drawString(String.valueOf(new DecimalFormat("0.00").format(minPrice)), 0, 250);
 
 			}
 			

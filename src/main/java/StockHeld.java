@@ -67,4 +67,8 @@ public class StockHeld extends Stock{
 		
 	}
 	
+	public float thisChange() {
+		return this.getPrice().floatValue() - this.getPriceBoughtAt();
+	}
+	
 }

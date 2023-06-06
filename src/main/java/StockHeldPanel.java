@@ -10,7 +10,7 @@ public class StockHeldPanel extends JPanel{
 	JLabel symbol;
 	PortfolioPanel pPanel;
 	
-	public StockHeldPanel(StockHeld stockHeld, PortfolioPanel pPanel) {
+	public StockHeldPanel(StockHeld stockHeld, final PortfolioPanel pPanel) {
 		
 		this.stockHeld = stockHeld;
 		this.pPanel = pPanel;

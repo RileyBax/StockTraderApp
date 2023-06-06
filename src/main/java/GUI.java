@@ -1,8 +1,6 @@
 /* TODO:
- * new portfolio class
- * handle requests between panels
- * buy and sell functionality
  * CREATE LOGIN PANEL, READ FROM DB
+ * when reading from db update recent lists
  */
 
 import java.awt.event.ActionEvent;
@@ -24,8 +22,8 @@ public class GUI extends JFrame{
 		// login here
 		Portfolio pf = new Portfolio("temp");
 		
-		MarketPanel mPanel = new MarketPanel(rh, pf);
-		PortfolioPanel pPanel = new PortfolioPanel(rh, pf);
+		final MarketPanel mPanel = new MarketPanel(rh, pf);
+		final PortfolioPanel pPanel = new PortfolioPanel(rh, pf);
 		
 		this.add(mPanel);
 		mPanel.setVisible(true);
@@ -33,7 +31,7 @@ public class GUI extends JFrame{
 		this.add(pPanel);
 		pPanel.setVisible(false);
 		
-		JButton swapButton = new JButton("Portfolio");
+		final JButton swapButton = new JButton("Portfolio");
 		swapButton.addActionListener(new ActionListener() {
 			
 			@Override
