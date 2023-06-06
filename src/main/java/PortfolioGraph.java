@@ -18,6 +18,7 @@ public class PortfolioGraph extends JPanel{
 	ArrayList<StockData> stockData;
 	LocalDateTime date;
 	int length;
+	float boughtAt;
 
 	public PortfolioGraph() {
 
@@ -26,11 +27,12 @@ public class PortfolioGraph extends JPanel{
 
 	}
 
-	public void setStock(List<StockData> stockData, int length) {
+	public void setStock(List<StockData> stockData, int length, float boughtAt) {
 
 		if(stockData != null) {
 			this.stockData = (ArrayList<StockData>) stockData;
 			this.length = length;
+			this.boughtAt = boughtAt;
 		}
 		else {
 			this.stockData = new ArrayList<StockData>();
@@ -65,21 +67,9 @@ public class PortfolioGraph extends JPanel{
 
 				x = (int) (40 + 330 - (i * (330.0f / (length - 1))));
 				y = (int) (30 + 220 - (stockData.get(i).getAdjustedClose() - minPrice) / difference * 220);
-
-				if(isDate(stockData.get(i).getDateTime())) {
-					g2d.setColor(Color.RED);
-					g2d.fillRect(x-2, y-2, 5, 5);
-					g2d.setColor(Color.BLACK);
-				}
 				
 				points[i] = new Point(x, y);
 
-			}
-
-			if(isDate(LocalDateTime.now())) {
-				g2d.setColor(Color.RED);
-				g2d.fillRect(370, (int) (30 + 220 - (stockData.get(0).getAdjustedClose() - minPrice) / difference * 220), 3, 3);
-				g2d.setColor(Color.BLACK);
 			}
 				
 			if(points.length > 1) {
@@ -92,6 +82,9 @@ public class PortfolioGraph extends JPanel{
 					g2d.drawLine(points[i].x, points[i].y, points[i+1].x, points[i+1].y);
 
 				}
+				
+				g2d.setColor(Color.red);
+				g2d.drawLine(40, (int) (250 - (boughtAt - minPrice) / difference * 220), 370, (int) (250 - (boughtAt - minPrice) / difference * 220));
 
 				g2d.setColor(Color.BLACK);
 
@@ -143,21 +136,6 @@ public class PortfolioGraph extends JPanel{
 			return 0;
 		}
 
-	}
-	
-	public void setDateBoughtAt(StockHeld stock) {
-		
-		this.date = stock.getDate();
-		
-	}
-	
-	public boolean isDate(LocalDateTime stock) {
-		
-		if(stock.getDayOfMonth() == date.getDayOfMonth() 
-				&& stock.getMonthValue() == date.getMonthValue() 
-				&& stock.getYear() == date.getYear()) return true;
-		
-		return false;
 	}
 	
 }

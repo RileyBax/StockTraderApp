@@ -8,6 +8,8 @@ import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.ImageObserver;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+
+import io.github.mainstringargs.alphavantagescraper.output.AlphaVantageException;
 
 public class PortfolioPanel extends JPanel{
 
@@ -29,11 +33,16 @@ public class PortfolioPanel extends JPanel{
 	JTextArea userStockData;
 	JButton updateButton;
 	UpdatePanel updatePanel;
-	
-	public PortfolioPanel(RequestHandler rh, final Portfolio pf) {
+	JLabel userInfo;
+	Database db;
+
+	public PortfolioPanel(final RequestHandler rh, final Portfolio pf) {
 
 		this.rh = rh;
 		this.pf = pf;
+		try {
+			db = new Database();
+		} catch (SQLException e) {}
 		this.setOpaque(false);
 
 		this.setBounds(0, 0, 800, 600);
@@ -101,11 +110,11 @@ public class PortfolioPanel extends JPanel{
 		stockData = new JTextArea();
 		stockData.setBounds(220, 380, 270, 170);
 		this.add(stockData);
-		
+
 		JLabel userStockDataLabel = new JLabel("Your Investment Data");
 		userStockDataLabel.setBounds(500, 350, 200, 30);
 		this.add(userStockDataLabel);
-		
+
 		userStockData = new JTextArea();
 		userStockData.setBounds(500, 380, 270, 170);
 		this.add(userStockData);
@@ -115,26 +124,35 @@ public class PortfolioPanel extends JPanel{
 		infoPanel.setBackground(Color.LIGHT_GRAY);
 		this.add(infoPanel);
 
-		JLabel userInfo = new JLabel("Profile: ");
+		userInfo = new JLabel("Profile: " + pf.name);
 		userInfo.setBounds(0, 0, 400, 30);
 		infoPanel.add(userInfo);
 
 		JButton saveButton = new JButton("Save Portfolio");
 		saveButton.setBounds(630, 10, 140, 30);
+		saveButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				db.saveProfile(pf);
+
+			}
+		});
 		this.add(saveButton);
 
 		// new thread takes held stock list continues repainting until thread ends
 		updateButton = new JButton("Update Stocks");
 		updateButton.setBounds(630, 70, 140, 30);
 		updateButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+
 				UpdateThread updateThread = new UpdateThread(rh, getThis());
 				updateThread.stockList = pf.stockList;
 				updateThread.start();
-				
+
 			}
 		});
 		this.add(updateButton);
@@ -144,11 +162,65 @@ public class PortfolioPanel extends JPanel{
 		this.add(updatePanel);
 
 	}
-	
+
+	public synchronized void getUser() throws SQLException {
+
+		ResultSet rs = db.getData(pf.name);
+
+		ArrayList<StartStock> startList = new ArrayList<StartStock>();
+
+		while(rs.next()) {
+
+			startList.add(new StartStock(rs.getString("symbol"), rs.getString("amount"), rs.getString("pricePaid"), rs.getString("priceBoughtAt")));
+
+		}
+
+		if(startList.size() > 0) {
+
+			int size = startList.size();
+
+			for(int i = 0; i < size; i++) {
+
+				while(pf.stockList.size() != i + 1) {
+
+					try {
+						pf.stockList.add(new StockHeld(rh.get(startList.get(i).symbol), startList.get(i).amount, startList.get(i).pricePaid, startList.get(i).priceBoughtAt));
+					}
+					catch(NullPointerException | AlphaVantageException e){
+						try {
+							this.wait(5000);
+						} catch (InterruptedException e1) {}
+					}
+
+				}
+
+			}
+			
+			for(int i = 0; i < size; i++) {
+				
+				while(pf.stockList.get(i).getHistory() == null) {
+					
+					try {
+						pf.stockList.get(i).setHistory(rh.getHistory(startList.get(i).symbol));
+					}
+					catch(NullPointerException | AlphaVantageException e){
+						try {
+							this.wait(5000);
+						} catch (InterruptedException e1) {}
+					}
+					
+				}
+				
+			}
+
+		}
+
+	}
+
 	public PortfolioPanel getThis() {
 		return this;
 	}
-	
+
 	public void updatePanel() {
 
 		// update stock list
@@ -177,8 +249,7 @@ public class PortfolioPanel extends JPanel{
 		// stock list is null exception?
 		if(pf.stockList.size() > 0) {
 
-			stockGraph.setDateBoughtAt(selectedStock);
-			stockGraph.setStock(pf.stockList.get(getIndex(selectedStock)).getHistory(), length);
+			stockGraph.setStock(pf.stockList.get(getIndex(selectedStock)).getHistory(), length, pf.stockList.get(getIndex(selectedStock)).getPriceBoughtAt());
 
 			// update stockData
 			stockData.setText("Symbol: " + selectedStock.getSymbol()
@@ -187,11 +258,10 @@ public class PortfolioPanel extends JPanel{
 			+ "\nOpen Price: $" + selectedStock.getOpenPrice()
 			+ "\nChange: $" + selectedStock.getChange()
 			+ "\nChange Percent: %" + selectedStock.getChangePercent());
-			
+
 			StockHeld tempStock = pf.getStock(selectedStock.getSymbol());
-			
-			userStockData.setText("Date Purchased: " + dateToString(tempStock)
-			+ "\nAmount Spent: $" + tempStock.getPricePaid()
+
+			userStockData.setText("Amount Spent: $" + tempStock.getPricePaid()
 			+ "\nPrice Bought At: " + tempStock.getPriceBoughtAt()
 			+ "\nShares Owned: " + tempStock.getAmount()
 			+ "\nCurrent Price of Shares: $" + tempStock.getAmount() * tempStock.getPrice().floatValue()
@@ -200,6 +270,8 @@ public class PortfolioPanel extends JPanel{
 		}
 
 	}
+
+
 
 	public StockHeld search(StockHeld stock) {
 
@@ -219,11 +291,9 @@ public class PortfolioPanel extends JPanel{
 		return out;
 
 	}
-	
-	public String dateToString(StockHeld stock) {
-		
-		return stock.getDate().getDayOfMonth() + "/" + stock.getDate().getMonthValue() + "/" + stock.getDate().getYear();
-		
+
+	public void updateName() {
+		userInfo.setText("Profile: " + pf.name);
 	}
 
 }

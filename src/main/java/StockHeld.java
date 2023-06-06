@@ -8,7 +8,6 @@ public class StockHeld extends Stock{
 	private float amount;
 	private float pricePaid;
 	private float priceBoughtAt;
-	private LocalDateTime date;
 
 	public StockHeld(Stock stock, float pricePaid) {
 		
@@ -17,19 +16,17 @@ public class StockHeld extends Stock{
 		this.pricePaid = pricePaid;
 		priceBoughtAt = stock.getPrice().floatValue();
 		amount = pricePaid / stock.getPrice().floatValue();
-		date = LocalDateTime.now();
 		
 	}
 	
 	// CONSTUCTOR for when read from file
-	public StockHeld(StockQuote stock, float amount, float pricePaid, float priceBoughtAt) {
+	public StockHeld(Stock stock, float amount, float pricePaid, float priceBoughtAt) {
 		
 		super(stock);
 
 		this.amount = amount;
 		this.pricePaid = pricePaid;
 		this.priceBoughtAt = priceBoughtAt;
-		
 	}
 	
 	public float getAmount() {
@@ -54,10 +51,6 @@ public class StockHeld extends Stock{
 
 	public void setPriceBoughtAt(float priceBoughtAt) {
 		this.priceBoughtAt = priceBoughtAt;
-	}
-	
-	public LocalDateTime getDate() {
-		return date;
 	}
 
 	@Override

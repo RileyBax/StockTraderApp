@@ -18,6 +18,8 @@ public class UpdateInfoThread extends Thread{
 	@Override
 	public synchronized void run() {
 		
+		updatePanel.size = this.size;
+		updatePanel.temp = this.temp;
 		updatePanel.isLoading = true;
 		
 		while(temp.size() < size) {

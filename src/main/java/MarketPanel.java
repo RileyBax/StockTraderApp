@@ -22,7 +22,7 @@ import io.github.mainstringargs.alphavantagescraper.output.timeseries.data.Stock
 public class MarketPanel extends JPanel{
 
 	ArrayList<StockPanel> recentList;
-	List<StockData> stockDataList;
+	//List<StockData> stockDataList;
 	RequestHandler rh;
 	int length = 8;
 	static JPanel recentPanel;
@@ -33,6 +33,9 @@ public class MarketPanel extends JPanel{
 	final JLabel sharesLabel;
 	Portfolio pf;
 	JButton searchButton;
+	List<StockData> currentStockDataList;
+	JButton sellButton;
+	JButton buyButton;
 
 	public MarketPanel(final RequestHandler rh, final Portfolio pf) {
 
@@ -59,7 +62,7 @@ public class MarketPanel extends JPanel{
 		buyField.setBounds(630, 100, 140, 30);
 		this.add(buyField);
 
-		JButton buyButton = new JButton("Buy");
+		buyButton = new JButton("Buy");
 		buyButton.setBounds(630, 70, 140, 30);
 		buyButton.addActionListener(new ActionListener() {
 
@@ -67,13 +70,18 @@ public class MarketPanel extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 
 				// java.lang.ArrayIndexOutOfBoundsException when error getting stock
-				if(!buyField.getText().isEmpty()) {
+				if(!buyField.getText().isEmpty()  && !stockData.getText().isEmpty()) {
 					Stock stock = searchRecent(stockData.getText().split("\n")[0].split(" ")[1]);
 
 					// HANDLE STRING EXCEPTION
 					// HANDLE MULTIPLE OF SAME BOUGHT
-					if(Float.parseFloat(buyField.getText()) > 0) pf.add(stock, Float.parseFloat(buyField.getText()));
-					updateSharesLabel(stock);
+					try {
+						if(Float.parseFloat(buyField.getText()) > 0) pf.add(stock, Float.parseFloat(buyField.getText()));
+						updateSharesLabel(stock);
+					}
+					catch(NumberFormatException e1) {
+						//warning
+					}
 				}
 
 			}
@@ -84,14 +92,14 @@ public class MarketPanel extends JPanel{
 		sellField.setBounds(630, 170, 140, 30);
 		this.add(sellField);
 
-		JButton sellButton = new JButton("Sell");
+		sellButton = new JButton("Sell");
 		sellButton.setBounds(630, 140, 140, 30);
 		sellButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				if(buyField.getText().length() > 1) {
+				if(!sellField.getText().isEmpty()  && !stockData.getText().isEmpty()) {
 
 					try {
 						pf.sell(pf.getStock(stockData.getText().split("\n")[0].split(" ")[1]), Float.parseFloat(sellField.getText()));
@@ -123,9 +131,9 @@ public class MarketPanel extends JPanel{
 		hourGraph.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(stockDataList != null) {
+				if(currentStockDataList != null) {
 					length = 8;
-					stockGraph.setStock(stockDataList, length);
+					stockGraph.setStock(currentStockDataList, length);
 					stockHistoryData.setText(updateGraphData());
 				}
 			}
@@ -137,9 +145,9 @@ public class MarketPanel extends JPanel{
 		todayGraph.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(stockDataList != null) {
+				if(currentStockDataList != null) {
 					length = 31;
-					stockGraph.setStock(stockDataList, length);
+					stockGraph.setStock(currentStockDataList, length);
 					stockHistoryData.setText(updateGraphData());
 				}
 			}
@@ -151,9 +159,9 @@ public class MarketPanel extends JPanel{
 		weekGraph.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(stockDataList != null) {
-					length = stockDataList.size();
-					stockGraph.setStock(stockDataList, length);
+				if(currentStockDataList != null) {
+					length = currentStockDataList.size();
+					stockGraph.setStock(currentStockDataList, length);
 					stockHistoryData.setText(updateGraphData());
 				}
 			}
@@ -183,10 +191,12 @@ public class MarketPanel extends JPanel{
 
 			public void actionPerformed(ActionEvent e) {
 
+				// add loading bar
+
 				Stock stock = null;
-				SearchThread searchThread = new SearchThread(rh, stock, searchBar.getText(), getThis());
+				List<StockData> stockDataList = null;
+				SearchThread searchThread = new SearchThread(rh, stock, stockDataList, searchBar.getText(), getThis());
 				searchThread.start();
-				// historic search thread here
 
 			}
 
@@ -194,7 +204,7 @@ public class MarketPanel extends JPanel{
 		this.add(searchButton);
 
 	}
-	
+
 	public MarketPanel getThis() {
 		return this;
 	}
@@ -219,8 +229,8 @@ public class MarketPanel extends JPanel{
 		String out = "";
 
 		out += length-1 + " Stock Entries From:\n" 
-				+ getDatetoString(stockDataList.get(length-1)) + " to " 
-				+ getDatetoString(stockDataList.get(0))
+				+ getDatetoString(currentStockDataList.get(length-1)) + " to " 
+				+ getDatetoString(currentStockDataList.get(0))
 				+ "\n\n" + getLowtoString()
 				+ "\n" + getHightoString()
 				+ "\n" + getMaxChangetoString();
@@ -230,13 +240,13 @@ public class MarketPanel extends JPanel{
 
 	public String getMaxChangetoString() {
 
-		double min = stockDataList.get(0).getAdjustedClose();
-		double max = stockDataList.get(length-1).getAdjustedClose();
+		double min = currentStockDataList.get(0).getAdjustedClose();
+		double max = currentStockDataList.get(length-1).getAdjustedClose();
 
 		for(int i = 0; i < length; i++) {
 
-			if(stockDataList.get(i).getAdjustedClose() > max) max = stockDataList.get(i).getAdjustedClose();
-			else if(stockDataList.get(i).getAdjustedClose() < min) min = stockDataList.get(i).getAdjustedClose();
+			if(currentStockDataList.get(i).getAdjustedClose() > max) max = currentStockDataList.get(i).getAdjustedClose();
+			else if(currentStockDataList.get(i).getAdjustedClose() < min) min = currentStockDataList.get(i).getAdjustedClose();
 
 		}
 
@@ -254,11 +264,11 @@ public class MarketPanel extends JPanel{
 
 	public String getHightoString() {
 
-		StockData out = stockDataList.get(0);
+		StockData out = currentStockDataList.get(0);
 
 		for(int i = 0; i < length; i++) {
 
-			if(stockDataList.get(i).getAdjustedClose() > out.getAdjustedClose()) out = stockDataList.get(i);
+			if(currentStockDataList.get(i).getAdjustedClose() > out.getAdjustedClose()) out = currentStockDataList.get(i);
 
 		}
 
@@ -267,11 +277,11 @@ public class MarketPanel extends JPanel{
 
 	public String getLowtoString() {
 
-		StockData out = stockDataList.get(0);
+		StockData out = currentStockDataList.get(0);
 
 		for(int i = 0; i < length; i++) {
 
-			if(stockDataList.get(i).getAdjustedClose() < out.getAdjustedClose()) out = stockDataList.get(i);
+			if(currentStockDataList.get(i).getAdjustedClose() < out.getAdjustedClose()) out = currentStockDataList.get(i);
 
 		}
 
@@ -324,20 +334,19 @@ public class MarketPanel extends JPanel{
 		recentList.add(new StockPanel(stock, stockDataList, this));
 	}
 
-	public void updatePanel(Stock stock) {
+	public void updatePanel(Stock stock, List<StockData> stockDataList) {
 
-		if(stock != null) {
+		if(stock != null && stockDataList != null) {
 
 			stockData.setText(updateData(stock));
 
 			// update graph
 			length = 8;
 
-			stockDataList = rh.getHistory(searchBar.getText());
-			if(stockDataList != null) {
-				stockGraph.setStock(stockDataList, 8);
-				stockHistoryData.setText(updateGraphData());
-			}
+			currentStockDataList = stockDataList;
+
+			stockGraph.setStock(stockDataList, 8);
+			stockHistoryData.setText(updateGraphData());
 
 			if(!containsStock(stock)) {
 				createPanel(stock, stockDataList);
@@ -347,7 +356,7 @@ public class MarketPanel extends JPanel{
 			}
 
 			updateRecentStock();
-			
+
 			updateSharesLabel(stock);
 
 		}
@@ -361,25 +370,24 @@ public class MarketPanel extends JPanel{
 	public void updateFromRecent(Stock stock, List<StockData> stockDataList) {
 
 		stockData.setText(updateData(stock));
-		this.stockDataList = stockDataList;
 		this.length = 8;
 
 		if(stockDataList != null) {
 			stockGraph.setStock(stockDataList, 8);
 			stockHistoryData.setText(updateGraphData());
 		}
-		
+
 		updateSharesLabel(stock);
-		
+
 	}
-	
+
 	public void updateSharesLabel(Stock stock) {
-		
+
 		if(pf.getStock(stock.getSymbol()) != null) {
 			sharesLabel.setText("Shares: " + pf.getStock(stock.getSymbol()).getAmount());
 		}
 		else sharesLabel.setText("Shares: 0");
-		
+
 	}
 
 }

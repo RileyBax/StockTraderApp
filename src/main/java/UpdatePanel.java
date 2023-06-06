@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -10,6 +11,8 @@ public class UpdatePanel extends JPanel{
 	public int angle;
 	int x;
 	int y;
+	int size;
+	List<StockHeld> temp;
 	
 	public UpdatePanel() {
 		
@@ -39,7 +42,7 @@ public class UpdatePanel extends JPanel{
 				
 			}
 			
-			// draw how many left?
+			g2d.drawString(temp.size() + "/" + size, 60, 65);
 			
 			angle+=1;
 		}

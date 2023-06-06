@@ -1,6 +1,6 @@
 /* TODO:
- * CREATE LOGIN PANEL, READ FROM DB
- * when reading from db update recent lists
+ * polish
+ * login menu freezes
  */
 
 import java.awt.event.ActionEvent;
@@ -12,6 +12,9 @@ import javax.swing.JFrame;
 public class GUI extends JFrame{
 
 	static RequestHandler rh = new RequestHandler();
+	final MarketPanel mPanel;
+	final PortfolioPanel pPanel;
+	final JButton swapButton;
 	
 	public GUI() {
 
@@ -19,19 +22,21 @@ public class GUI extends JFrame{
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setLayout(null);
 		
-		// login here
-		Portfolio pf = new Portfolio("temp");
+		Portfolio pf = new Portfolio("");
 		
-		final MarketPanel mPanel = new MarketPanel(rh, pf);
-		final PortfolioPanel pPanel = new PortfolioPanel(rh, pf);
+		mPanel = new MarketPanel(rh, pf);
+		pPanel = new PortfolioPanel(rh, pf);
+		
+		LoginPanel lPanel = new LoginPanel(this, pf, pPanel);
+		this.add(lPanel);
 		
 		this.add(mPanel);
-		mPanel.setVisible(true);
+		mPanel.setVisible(false);
 		
 		this.add(pPanel);
 		pPanel.setVisible(false);
 		
-		final JButton swapButton = new JButton("Portfolio");
+		swapButton = new JButton("Portfolio");
 		swapButton.addActionListener(new ActionListener() {
 			
 			@Override
@@ -53,6 +58,7 @@ public class GUI extends JFrame{
 		});
 		swapButton.setBounds(10, 10, 200, 30);
 		this.add(swapButton);
+		swapButton.setVisible(false);
 
 		this.setVisible(true);
 

@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Tue Jun 06 21:10:13 NZST 2023:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0188-8ff8-97d5-00001d902150 
+on database directory C:\Users\User\Documents\GitHub\StockTraderApp\pdc with class loader sun.misc.Launcher$AppClassLoader@73d16e93 
+Loaded from file:/C:/Users/User/.m2/repository/org/apache/derby/derby/10.14.2.0/derby-10.14.2.0.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_371-b11
+user.dir=C:\Users\User\Documents\GitHub\StockTraderApp
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
