@@ -23,7 +23,7 @@ public class GetUserThread extends Thread{
 	}
 	
 	
-	// used on startup, initializes the portfolio panel
+        // Seperate thread that continues requesting stock data until all saved stocks are received.
 	@Override
 	public synchronized void run() {
 
@@ -66,7 +66,6 @@ public class GetUserThread extends Thread{
 
 			for(int i = 0; i < size ; i++) {
 				
-				//mPanel.createBoughtPanel(pf.stockList.get(i), pf.stockList.get(i).getHistory());
 				mPanel.updatePanel(pf.stockList.get(i), pf.stockList.get(i).getHistory());
 				
 			}

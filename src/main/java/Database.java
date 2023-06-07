@@ -4,7 +4,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,7 +21,8 @@ public class Database {
         state = connection.createStatement();
     	
     }
-        
+    
+    // Creates table if no table is found, deletes all old user data and replaces it with current stock data
     public static void saveProfile(Portfolio pf) {
 
         try {

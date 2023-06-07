@@ -8,6 +8,7 @@ public class Portfolio {
 	List<StockHeld> stockList;
 	float change;
 
+	// Stores a users shares, does not handle loading and saving from database
 	public Portfolio(String name) {
 
 		this.name = name;

@@ -73,6 +73,7 @@ public class LoginPanel extends JPanel{
 
 	}
 	
+        // Initializes user profile if that user exists.
 	public void setUpPortfolio() throws SQLException {
 		
 		ResultSet rs = pPanel.db.getData(pf.name);

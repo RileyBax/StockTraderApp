@@ -1,13 +1,10 @@
-/* TODO:
- * polish
- */
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
+// Creates all main panels, handles swapping betweem market and portfolio panels.
 public class GUI extends JFrame{
 
 	static RequestHandler rh = new RequestHandler();

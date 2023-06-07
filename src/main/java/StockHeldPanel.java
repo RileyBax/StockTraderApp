@@ -60,7 +60,7 @@ public class StockHeldPanel extends JPanel{
 	
 	public void isClicked(MouseEvent e, PortfolioPanel pf) {
 		
-		// update graph, shpw amount owned
+		// update graph, show amount owned
 		if(pPanel.length > 31) pPanel.length = stockHeld.getHistory().size();
 		pPanel.selectedStock = stockHeld;
 		pPanel.updatePanel();

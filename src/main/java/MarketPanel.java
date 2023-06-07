@@ -64,11 +64,11 @@ public class MarketPanel extends JPanel{
 		buyButton = new JButton("Buy");
 		buyButton.setBounds(630, 70, 140, 30);
 		buyButton.addActionListener(new ActionListener() {
-
+                        
+                        // Adds stock to portfolio stock list
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				// java.lang.ArrayIndexOutOfBoundsException when error getting stock
 				if(!buyField.getText().isEmpty()  && !stockData.getText().isEmpty()) {
 					Stock stock = searchRecent(stockData.getText().split("\n")[0].split(" ")[1]);
 
@@ -182,9 +182,8 @@ public class MarketPanel extends JPanel{
 		searchButton.setBounds(630, 10, 140, 30);
 		searchButton.addActionListener(new ActionListener() {
 
+                        // When clicked, creates a new thread that handles requesting stock
 			public void actionPerformed(ActionEvent e) {
-
-				// add loading bar
 
 				Stock stock = null;
 				List<StockData> stockDataList = null;
@@ -331,13 +330,13 @@ public class MarketPanel extends JPanel{
 		recentList.add(new StockPanel(stock, stockDataList, this));
 	}
 
+        // creates new recent stock object adds it to recent list
 	public void updatePanel(Stock stock, List<StockData> stockDataList) {
 
 		if(stock != null && stockDataList != null) {
 
 			stockData.setText(updateData(stock));
 
-			// update graph
 			length = 8;
 
 			currentStockDataList = stockDataList;
@@ -347,9 +346,6 @@ public class MarketPanel extends JPanel{
 
 			if(!containsStock(stock)) {
 				createPanel(stock, stockDataList);
-			}
-			else {
-				//update that panel
 			}
 
 			updateRecentStock();

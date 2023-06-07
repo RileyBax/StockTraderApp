@@ -1,25 +1,11 @@
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.ImageObserver;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.AttributedCharacterIterator;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-
-import io.github.mainstringargs.alphavantagescraper.output.AlphaVantageException;
 
 public class PortfolioPanel extends JPanel{
 
@@ -36,7 +22,7 @@ public class PortfolioPanel extends JPanel{
 	JLabel userInfo;
 	Database db;
 
-	// Shows personal data from shares.
+	// Shows all shares bought and personal data from shares bought,
 	public PortfolioPanel(final RequestHandler rh, final Portfolio pf) {
 
 		this.rh = rh;
@@ -191,7 +177,6 @@ public class PortfolioPanel extends JPanel{
 			this.selectedStock = pf.stockList.get(0);
 		}
 
-		// stock list is null exception?
 		if(pf.stockList.size() > 0) {
 
 			stockGraph.setStock(pf.stockList.get(getIndex(selectedStock)).getHistory(), length, pf.stockList.get(getIndex(selectedStock)).getPriceBoughtAt(), pf.stockList.get(getIndex(selectedStock)).getPrice().floatValue());
