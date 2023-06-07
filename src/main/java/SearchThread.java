@@ -20,6 +20,7 @@ public class SearchThread extends Thread{
 
 	}
 
+	// Used when searching for a stock, continues requesting stock until received, or after 3 tries.
 	@Override
 	public synchronized void run() {
 

@@ -10,6 +10,7 @@ public class StockHeldPanel extends JPanel{
 	JLabel symbol;
 	PortfolioPanel pPanel;
 	
+	// Used in Portfolio panel, clickable.
 	public StockHeldPanel(StockHeld stockHeld, final PortfolioPanel pPanel) {
 		
 		this.stockHeld = stockHeld;

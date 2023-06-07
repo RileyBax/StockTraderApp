@@ -5,6 +5,7 @@ public class UpdateLoginInfoThread extends Thread{
 	public GetUserThread guThread;
 	public boolean isLoading;
 	
+	// Updates update login panel, for loading animation 
 	public UpdateLoginInfoThread(UpdateLoginPanel updatePanel, GetUserThread guThread) {
 		
 		this.updatePanel = updatePanel;

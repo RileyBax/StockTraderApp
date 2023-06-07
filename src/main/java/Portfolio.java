@@ -8,8 +8,6 @@ public class Portfolio {
 	List<StockHeld> stockList;
 	float change;
 
-	// create new constructor for reading from DB
-
 	public Portfolio(String name) {
 
 		this.name = name;

@@ -6,6 +6,7 @@ public class StartStock {
 	float pricePaid;
 	float priceBoughtAt;
 	
+	// Temporary object used to store data  from database
 	public StartStock(String symbol, String amount, String pricePaid, String priceBoughtAt) {
 		
 		this.symbol = symbol;

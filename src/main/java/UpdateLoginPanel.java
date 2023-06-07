@@ -12,6 +12,7 @@ public class UpdateLoginPanel extends JPanel{
 	int x;
 	int y;
 
+	// loading animation, used in login panel
 	public UpdateLoginPanel() {
 
 		this.setBounds(630, 110, 140, 120);

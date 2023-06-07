@@ -15,6 +15,7 @@ public class StockPanel extends JPanel{
 	List<StockData> stockData;
 	JPanel marketPanel;
 
+	// used in market panel history list, clickable.
 	public StockPanel(Stock stock, List<StockData> stockData, final MarketPanel marketPanel) {
 
 		this.stock = stock;

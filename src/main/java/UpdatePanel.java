@@ -14,6 +14,7 @@ public class UpdatePanel extends JPanel{
 	int size;
 	List<StockHeld> temp;
 	
+	// loading animation, used in portfolio panel
 	public UpdatePanel() {
 		
 		this.setBounds(630, 110, 140, 120);

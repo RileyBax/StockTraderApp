@@ -9,6 +9,8 @@ public class StockHeld extends Stock{
 	private float pricePaid;
 	private float priceBoughtAt;
 
+	// stores stock information and user data.
+	
 	public StockHeld(Stock stock, float pricePaid) {
 		
 		super(stock);

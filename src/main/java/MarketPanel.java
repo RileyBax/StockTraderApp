@@ -20,7 +20,6 @@ import io.github.mainstringargs.alphavantagescraper.output.timeseries.data.Stock
 public class MarketPanel extends JPanel{
 
 	ArrayList<StockPanel> recentList;
-	//List<StockData> stockDataList;
 	RequestHandler rh;
 	int length = 8;
 	static JPanel recentPanel;
@@ -35,6 +34,8 @@ public class MarketPanel extends JPanel{
 	JButton sellButton;
 	JButton buyButton;
 
+	// Allows for buying and selling of stocks, searches for stock using AlphaVantage wrapper
+	// Displays stock data to panel
 	public MarketPanel(final RequestHandler rh, final Portfolio pf) {
 
 		this.rh = rh;
@@ -71,15 +72,11 @@ public class MarketPanel extends JPanel{
 				if(!buyField.getText().isEmpty()  && !stockData.getText().isEmpty()) {
 					Stock stock = searchRecent(stockData.getText().split("\n")[0].split(" ")[1]);
 
-					// HANDLE STRING EXCEPTION
-					// HANDLE MULTIPLE OF SAME BOUGHT
 					try {
 						if(Float.parseFloat(buyField.getText()) > 0) pf.add(stock, Float.parseFloat(buyField.getText()));
 						updateSharesLabel(stock);
 					}
-					catch(NumberFormatException e1) {
-						//warning
-					}
+					catch(NumberFormatException e1) {}
 				}
 
 			}
@@ -102,9 +99,7 @@ public class MarketPanel extends JPanel{
 					try {
 						pf.sell(pf.getStock(stockData.getText().split("\n")[0].split(" ")[1]), Float.parseFloat(sellField.getText()));
 						updateSharesLabel(searchRecent(stockData.getText().split("\n")[0].split(" ")[1]));
-					} catch (NumberFormatException | IOException e1) {
-						//warning message
-					}
+					} catch (NumberFormatException | IOException e1) {}
 
 				}
 

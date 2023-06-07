@@ -20,11 +20,11 @@ public class GetUserThread extends Thread{
 		
 	}
 	
+	
+	// used on startup, initializes the portfolio panel
 	@Override
 	public synchronized void run() {
-		
-		
-		
+
 		if(startList.size() > 0) {
 
 			int size = startList.size();

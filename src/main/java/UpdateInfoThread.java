@@ -7,6 +7,7 @@ public class UpdateInfoThread extends Thread{
 	public int size;
 	public boolean isLoading;
 	
+	// Updates update panel, for loading animation 
 	public UpdateInfoThread(UpdatePanel updatePanel, List<StockHeld> temp, int size) {
 		
 		this.updatePanel = updatePanel;

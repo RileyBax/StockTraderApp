@@ -43,6 +43,7 @@ public class PortfolioGraph extends JPanel{
 
 	}
 
+	// draws graph to portfolio panel
 	public void paint(Graphics g) {
 
 		Graphics2D g2d = (Graphics2D) g;

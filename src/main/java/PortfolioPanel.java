@@ -36,6 +36,7 @@ public class PortfolioPanel extends JPanel{
 	JLabel userInfo;
 	Database db;
 
+	// Shows personal data from shares.
 	public PortfolioPanel(final RequestHandler rh, final Portfolio pf) {
 
 		this.rh = rh;

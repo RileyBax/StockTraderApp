@@ -11,6 +11,7 @@ public class UpdateThread extends Thread{
 	public List<StockHeld> stockList;
 	public PortfolioPanel pPanel;
 
+	// Updates all stocks in portfolio
 	public UpdateThread(RequestHandler rh, PortfolioPanel pPanel) {
 
 		this.rh = rh;

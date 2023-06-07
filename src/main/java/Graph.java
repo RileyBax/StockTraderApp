@@ -39,6 +39,7 @@ public class Graph extends JPanel{
 
 	}
 
+	// Draws graph for market Panel
 	@Override
 	public void paint(Graphics g) {
 

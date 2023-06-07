@@ -21,6 +21,7 @@ public class RequestHandler extends StockQuotes {
 	static String apiKey = "ATD3OP6WNYPCRAEY";
 	static TimeSeries timeSeries;
 
+	// Handles all api requests
 	public RequestHandler() {
 
 		super(new AlphaVantageConnector(apiKey, 3000));

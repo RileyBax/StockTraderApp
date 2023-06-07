@@ -16,6 +16,8 @@ public class Stock {
 	private List<StockData> history;
 	public RequestHandler rh = new RequestHandler();
 
+	// stores stock information
+	
 	public String getSymbol() {
 		return symbol;
 	}
