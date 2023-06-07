@@ -27,7 +27,7 @@ public class GUI extends JFrame{
 		mPanel = new MarketPanel(rh, pf);
 		pPanel = new PortfolioPanel(rh, pf);
 		
-		lPanel = new LoginPanel(this, pf, pPanel);
+		lPanel = new LoginPanel(this, pf, pPanel, mPanel);
 		this.add(lPanel);
 		
 		this.add(mPanel);

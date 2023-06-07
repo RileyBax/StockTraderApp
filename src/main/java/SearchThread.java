@@ -30,7 +30,7 @@ public class SearchThread extends Thread{
 		mPanel.buyButton.setEnabled(false);
 		mPanel.sellButton.setEnabled(false);
 
-		while(stock == null && i < 3 || stockDataList == null && i < 3) {
+		while(stock == null && i < 5 || stockDataList == null && i < 5) {
 
 			if(stock == null) stock = rh.get(symbol);
 			else if(stockDataList == null) stockDataList = rh.getHistory(symbol);

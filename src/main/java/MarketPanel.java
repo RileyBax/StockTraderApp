@@ -326,6 +326,10 @@ public class MarketPanel extends JPanel{
 	public void createPanel(Stock stock, List<StockData> stockDataList) {
 		recentList.add(new StockPanel(stock, stockDataList, this));
 	}
+	
+	public void createBoughtPanel(StockHeld stock, List<StockData> stockDataList) {
+		recentList.add(new StockPanel(stock, stockDataList, this));
+	}
 
 	public void updatePanel(Stock stock, List<StockData> stockDataList) {
 
@@ -368,6 +372,7 @@ public class MarketPanel extends JPanel{
 		if(stockDataList != null) {
 			stockGraph.setStock(stockDataList, 8);
 			stockHistoryData.setText(updateGraphData());
+			currentStockDataList = stockDataList;
 		}
 
 		updateSharesLabel(stock);

@@ -63,6 +63,54 @@ public class StockPanel extends JPanel{
 		this.setVisible(true);
 
 	}
+	
+	public StockPanel(StockHeld stock, List<StockData> stockData, final MarketPanel marketPanel) {
+
+		this.stock = stock;
+		this.stockData = stockData;
+		this.marketPanel = marketPanel;
+		this.stock.setHistory(stockData);
+		symbol = new JLabel(stock.getSymbol());
+		symbol.setBounds(0, 0, 200, 30);
+		this.add(symbol);
+
+		this.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+
+				isClicked(e, marketPanel);
+
+			}
+		});
+
+		this.setVisible(true);
+
+	}
 
 	public void isClicked(MouseEvent e, MarketPanel marketPanel ) {
 

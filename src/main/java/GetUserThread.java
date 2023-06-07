@@ -9,14 +9,16 @@ public class GetUserThread extends Thread{
 	RequestHandler rh;
 	PortfolioPanel pPanel;
 	GUI gui;
+	MarketPanel mPanel;
 	
-	public GetUserThread(ArrayList<StartStock> startList, Portfolio pf, GUI gui, PortfolioPanel pPanel) {
+	public GetUserThread(ArrayList<StartStock> startList, Portfolio pf, GUI gui, PortfolioPanel pPanel, MarketPanel mPanel) {
 		
 		this.startList = startList;
 		this.pf = pf;
 		this.gui = gui;
 		rh = gui.rh;
 		this.pPanel = pPanel;
+		this.mPanel = mPanel;
 		
 	}
 	
@@ -62,6 +64,13 @@ public class GetUserThread extends Thread{
 				
 			}
 
+			for(int i = 0; i < size ; i++) {
+				
+				//mPanel.createBoughtPanel(pf.stockList.get(i), pf.stockList.get(i).getHistory());
+				mPanel.updatePanel(pf.stockList.get(i), pf.stockList.get(i).getHistory());
+				
+			}
+			
 		}
 
 		gui.lPanel.setVisible(false);

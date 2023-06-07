@@ -16,10 +16,10 @@ public class LoginPanel extends JPanel{
 	Portfolio pf;
 	PortfolioPanel pPanel;
 	GUI gui;
-	
+	MarketPanel mPanel;
 	JButton inputButton;
 
-	public LoginPanel(final GUI gui, final Portfolio pf, final PortfolioPanel pPanel) {
+	public LoginPanel(final GUI gui, final Portfolio pf, final PortfolioPanel pPanel,  MarketPanel mPanel) {
 
 		this.setBounds(0, 0, 800, 600);
 		this.setLayout(null);
@@ -27,6 +27,7 @@ public class LoginPanel extends JPanel{
 		this.pf = pf;
 		this.pPanel = pPanel;
 		this.gui = gui;
+		this.mPanel = mPanel;
 
 		JLabel title = new JLabel("Stock Trader");
 		title.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 42));
@@ -56,7 +57,11 @@ public class LoginPanel extends JPanel{
 					try {
 						setUpPortfolio();
 						inputButton.setEnabled(false);
-					} catch (SQLException e1) {}
+					} catch (SQLException e1) {
+						gui.lPanel.setVisible(false);
+						gui.mPanel.setVisible(true);
+						gui.swapButton.setVisible(true);
+					}
 
 				}
 
@@ -73,14 +78,14 @@ public class LoginPanel extends JPanel{
 		ResultSet rs = pPanel.db.getData(pf.name);
 
 		ArrayList<StartStock> startList = new ArrayList<StartStock>();
-
+		int i = 0;
 		while(rs.next()) {
 
 			startList.add(new StartStock(rs.getString("symbol"), rs.getString("amount"), rs.getString("pricePaid"), rs.getString("priceBoughtAt")));
-
+			
 		}
 
-		GetUserThread guThread = new GetUserThread(startList, pf, gui, pPanel);
+		GetUserThread guThread = new GetUserThread(startList, pf, gui, pPanel, mPanel);
 		UpdateLoginPanel uPanel = new UpdateLoginPanel();
 		uPanel.setBounds(320, 330, 140, 120);
 		this.add(uPanel);

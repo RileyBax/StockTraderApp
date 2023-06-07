@@ -36,9 +36,9 @@ public class Database {
                 
                 state.execute("CREATE TABLE data (" +
                     "symbol VARCHAR(45), " +
-                    " amount DECIMAL," +
-                    " pricePaid DECIMAL," +
-                    " priceBoughtAt DECIMAL, " +
+                    " amount DECIMAL(18,6)," +
+                    " pricePaid DECIMAL(18,6)," +
+                    " priceBoughtAt DECIMAL(18,6), " +
                     " profile VARCHAR(45), " +
                     " date INTEGER)");
             }
